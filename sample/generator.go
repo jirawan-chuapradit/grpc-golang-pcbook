@@ -125,4 +125,5 @@ func NewLaptop() *pb.Laptop {
 		ReleaseYear: uint32(randomInt(2015,2019)),
 		UpdatedAt: ptypes.TimestampNow(),
 	}
+	return laptop
 }

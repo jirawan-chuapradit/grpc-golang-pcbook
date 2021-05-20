@@ -1,0 +1,62 @@
+{
+ "id": "f30b3caf-fc42-47da-85b7-5ae322fe4f04",
+ "brand": "Apple",
+ "name": "Macbook Pro",
+ "cpu": {
+  "brand": "Intel",
+  "name": "Core i3-9980HK",
+  "number_cores": 4,
+  "number_threads": 7,
+  "min_ghz": 2.358218589494673,
+  "max_ghz": 4.941243491425448
+ },
+ "ram": {
+  "value": "26",
+  "unit": 5
+ },
+ "gpus": [
+  {
+   "brand": "NVIDIA",
+   "name": "GTX 1070",
+   "min_ghz": 1.429008368904631,
+   "max_ghz": 1.6231285947660967,
+   "memory": {
+    "value": "2",
+    "unit": 5
+   }
+  }
+ ],
+ "storage": [
+  {
+   "driver": 2,
+   "memory": {
+    "value": "285",
+    "unit": 5
+   }
+  },
+  {
+   "driver": 1,
+   "memory": {
+    "value": "5",
+    "unit": 5
+   }
+  }
+ ],
+ "screen": {
+  "size_inch": 16.217962,
+  "resolution": {
+   "width": 2206,
+   "height": 1241
+  },
+  "panel": 2,
+  "multitouch": false
+ },
+ "keyboard": {
+  "layout": 1,
+  "backlit": false
+ },
+ "weight_kg": 2.453960941649118,
+ "price_usd": 2080.3554332250064,
+ "release_year": 2018,
+ "updated_at": "2021-05-20T08:34:54.235738Z"
+}
