@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"flag"
+	"io"
 	"log"
 	"time"
 
@@ -25,19 +26,64 @@ func main() {
 	defer conn.Close()
 
 	laptopClient := pb.NewLaptopServiceClient(conn)
-	// set time out
-	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer cancel()
-	CreateNewLaptopRequestWithID(laptopClient, ctx)
-	CreateNewLaptopRequestWithoutID(laptopClient, ctx)
-	
+
+	for i := 0; i < 10; i++ {
+		createLaptop(laptopClient)
+	}
+
+	filter := &pb.Filter{
+		MaxPriceUsd: 3000,
+		MinCpuCores: 4,
+		MinCpuGhz:   2.5,
+		MinRam:      &pb.Memory{Value: 8, Unit: pb.Memory_GIGABYTE},
+	}
+	searchLaptop(laptopClient, filter)
 
 }
 
-func CreateNewLaptopRequestWithID(laptopClient pb.LaptopServiceClient, ctx context.Context){
-	log.Println("======> CreateNewLaptopRequestWithID")
+func searchLaptop(laptopClient pb.LaptopServiceClient, filter *pb.Filter) {
+	log.Print("search filter: ", filter)
+
+	// set time out
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	req := &pb.SearchLaptopRequest{Filter: filter}
+	stream, err := laptopClient.SearchLaptop(ctx, req)
+	if err != nil {
+		log.Fatal("cannot search laptop: ", err)
+	}
+
+	for {
+		res, err := stream.Recv()
+		if err == io.EOF {
+			return
+		}
+		if err != nil {
+			log.Fatal("cannot receive response: ", err)
+		}
+
+		laptop := res.GetLaptop()
+		log.Print("- found: ", laptop.GetId())
+		log.Print("\t+ brand: ", laptop.GetBrand())
+		log.Print("\t+ name: ", laptop.GetName())
+		log.Print("\t+ cpu cores: ", laptop.GetCpu().GetNumberCores())
+		log.Print("\t+ cpu min ghz: ", laptop.GetCpu().GetMinGhz())
+		log.Print("\t+ ram: ",laptop.GetRam().GetValue(), laptop.GetRam().GetUnit())
+		log.Print("\t+ price: ",laptop.GetPriceUsd(), "usd")
+	}
+
+}
+
+func createLaptop(laptopClient pb.LaptopServiceClient) {
+	log.Println("======> CreateNewLaptop")
+
+	// set time out
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
 	laptop := sample.NewLaptop()
-	
+
 	req := &pb.CreateLaptopRequest{
 		Laptop: laptop,
 	}
@@ -55,29 +101,5 @@ func CreateNewLaptopRequestWithID(laptopClient pb.LaptopServiceClient, ctx conte
 
 	}
 
-	log.Printf("created laptop with id: %s", res.Id)
-}
-
-func CreateNewLaptopRequestWithoutID(laptopClient pb.LaptopServiceClient, ctx context.Context){
-	log.Println("======> CreateNewLaptopRequestWithoutID")
-
-	laptop := sample.NewLaptop()
-	laptop.Id = "9b8e6280-ef47-42a8-858e-8d94fcd4c03a"
-
-	req := &pb.CreateLaptopRequest{
-		Laptop: laptop,
-	}
-
-	res, err := laptopClient.CreateLaptop(ctx, req)
-	if err != nil {
-		st, ok := status.FromError(err)
-		if ok && st.Code() == codes.AlreadyExists {
-			// not a big deal
-			log.Println("laptop already exists")
-		}else {
-			log.Fatal("cannot create laptop: ", err)
-		}
-		return
-	}
 	log.Printf("created laptop with id: %s", res.Id)
 }

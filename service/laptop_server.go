@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"log"
-	"time"
 
 	"github.com/google/uuid"
 	"github.com/jirawan-chuapradit/grpc-golang-pcbook/pb"
@@ -23,25 +22,25 @@ func NewLaptopServer(store LaptopStore) *LaptopServer {
 }
 
 // CreateLaptop is a unary RPC to create a new laptop
-func (server *LaptopServer) CreateLaptop(ctx context.Context, req *pb.CreateLaptopRequest) (*pb.CreateLaptopResponse, error){
-	laptop := req.GetLaptop() 
+func (server *LaptopServer) CreateLaptop(ctx context.Context, req *pb.CreateLaptopRequest) (*pb.CreateLaptopResponse, error) {
+	laptop := req.GetLaptop()
 	log.Printf("receive a create-laptop request with id: %s", laptop.Id)
 
 	if len(laptop.Id) > 0 {
 		_, err := uuid.Parse(laptop.Id)
-		if err != nil{
-			return nil, status.Errorf(codes.InvalidArgument,"laptop ID is not a valid UUID: %v", err)
+		if err != nil {
+			return nil, status.Errorf(codes.InvalidArgument, "laptop ID is not a valid UUID: %v", err)
 		}
-	}else {
+	} else {
 		id, err := uuid.NewRandom()
 		if err != nil {
-			return nil, status.Errorf(codes.Internal,"cannot generate a new laptop ID: %v", err)
+			return nil, status.Errorf(codes.Internal, "cannot generate a new laptop ID: %v", err)
 		}
 		laptop.Id = id.String()
 	}
 
 	// some heavy processing
-	time.Sleep(6 * time.Second)
+	// time.Sleep(6 * time.Second)
 
 	if ctx.Err() == context.Canceled {
 		log.Print("request is canceled")
@@ -56,7 +55,7 @@ func (server *LaptopServer) CreateLaptop(ctx context.Context, req *pb.CreateLapt
 	// save the laptop to store
 	err := server.Store.Save(laptop)
 	code := codes.Internal
-	if errors.Is(err,ErrAlreadyExists) {
+	if errors.Is(err, ErrAlreadyExists) {
 		code = codes.AlreadyExists
 	}
 	if err != nil {
@@ -71,3 +70,28 @@ func (server *LaptopServer) CreateLaptop(ctx context.Context, req *pb.CreateLapt
 	return res, nil
 }
 
+// SearchLaptop is a server-streaming RPC to search for laptops
+func (server *LaptopServer) SearchLaptop(req *pb.SearchLaptopRequest, stream pb.LaptopService_SearchLaptopServer) error {
+	filter := req.GetFilter()
+	log.Printf("receive a search-laptop request with filter: %v", filter)
+
+	err := server.Store.Search(
+		stream.Context(),
+		filter, func(laptop *pb.Laptop) error {
+		res := &pb.SearchLaptopResponse{Laptop: laptop}
+
+		err := stream.Send(res)
+		if err != nil {
+			return err
+		}
+
+		log.Printf("send laptop with id: %s", laptop.GetId())
+		return nil
+	})
+
+	if err != nil {
+		return status.Errorf(codes.Internal, "unexpected error: %v", err)
+	}
+
+	return nil
+}
