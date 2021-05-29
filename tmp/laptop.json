@@ -1,27 +1,27 @@
 {
- "id": "f30b3caf-fc42-47da-85b7-5ae322fe4f04",
- "brand": "Apple",
- "name": "Macbook Pro",
+ "id": "c6d5353c-e5b9-442f-a55c-5fa55ec8e24d",
+ "brand": "Lenovo",
+ "name": "Thinkpad X1",
  "cpu": {
-  "brand": "Intel",
-  "name": "Core i3-9980HK",
-  "number_cores": 4,
+  "brand": "AMD",
+  "name": "Ryzen 7 PRO 2700U",
+  "number_cores": 6,
   "number_threads": 7,
-  "min_ghz": 2.358218589494673,
-  "max_ghz": 4.941243491425448
+  "min_ghz": 2.999137678964636,
+  "max_ghz": 4.113654172176278
  },
  "ram": {
-  "value": "26",
+  "value": "48",
   "unit": 5
  },
  "gpus": [
   {
-   "brand": "NVIDIA",
-   "name": "GTX 1070",
-   "min_ghz": 1.429008368904631,
-   "max_ghz": 1.6231285947660967,
+   "brand": "AMD",
+   "name": "RX 590",
+   "min_ghz": 1.1776202255457102,
+   "max_ghz": 1.7904711435631195,
    "memory": {
-    "value": "2",
+    "value": "6",
     "unit": 5
    }
   }
@@ -30,33 +30,33 @@
   {
    "driver": 2,
    "memory": {
-    "value": "285",
+    "value": "990",
     "unit": 5
    }
   },
   {
    "driver": 1,
    "memory": {
-    "value": "5",
+    "value": "2",
     "unit": 5
    }
   }
  ],
  "screen": {
-  "size_inch": 16.217962,
+  "size_inch": 15.316705,
   "resolution": {
-   "width": 2206,
-   "height": 1241
+   "width": 5537,
+   "height": 3115
   },
   "panel": 2,
   "multitouch": false
  },
  "keyboard": {
-  "layout": 1,
-  "backlit": false
+  "layout": 3,
+  "backlit": true
  },
- "weight_kg": 2.453960941649118,
- "price_usd": 2080.3554332250064,
- "release_year": 2018,
- "updated_at": "2021-05-20T08:34:54.235738Z"
+ "weight_kg": 2.8829105848646757,
+ "price_usd": 2421.29931557878,
+ "release_year": 2019,
+ "updated_at": "2021-05-29T12:52:30.602280Z"
 }
